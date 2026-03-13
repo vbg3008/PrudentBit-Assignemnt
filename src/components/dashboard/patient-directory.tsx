@@ -4,6 +4,7 @@ import { usePatients } from '@/hooks/use-patients';
 import { SearchBar } from './search-bar';
 import { SortDropdown } from './sort-dropdown';
 import { DiseaseFilterDropdown } from './disease-filter-dropdown';
+import { AgeGroupFilter } from './age-group-filter';
 import { PatientTable } from './patient-table';
 import { PatientGrid } from './patient-grid';
 import { DashboardPagination as PaginationPanel } from './dashboard-pagination';
@@ -20,12 +21,14 @@ export function PatientDirectory() {
     data,
     total,
     loading,
+    error,
     params,
     setPage,
     setSearch,
     setSort,
     setParam,
     setMedicalIssue,
+    setAgeGroup,
   } = usePatients();
 
   // Use URL view param if available, otherwise fallback to store
@@ -42,6 +45,15 @@ export function PatientDirectory() {
       const label = params.medical_issue.charAt(0).toUpperCase() + params.medical_issue.slice(1);
       filters.push({ label: 'Disease', value: label, type: 'medical_issue' });
     }
+    if (params.age_group) {
+      const labels: Record<string, string> = {
+        '0-12': 'Child',
+        '13-19': 'Teen',
+        '20-59': 'Adult',
+        '60-120': 'Senior'
+      };
+      filters.push({ label: 'Age', value: labels[params.age_group] || params.age_group, type: 'age_group' });
+    }
     if (params.search) {
       filters.push({ label: 'Search', value: `"${params.search}"`, type: 'search' });
     }
@@ -51,10 +63,11 @@ export function PatientDirectory() {
     }
 
     return filters;
-  }, [params.medical_issue, params.search, params.sort, params.order]);
+  }, [params.medical_issue, params.age_group, params.search, params.sort, params.order]);
 
   const handleRemoveFilter = (type: string) => {
     if (type === 'medical_issue') setMedicalIssue('');
+    if (type === 'age_group') setAgeGroup('');
     if (type === 'search') setSearch('');
     if (type === 'sort') setSort('id', 'asc');
   };
@@ -119,6 +132,12 @@ export function PatientDirectory() {
                 name=" Disease"
                 onChange={setMedicalIssue}
               />
+            
+              <AgeGroupFilter
+                value={params.age_group || ''}
+                name=" Age Group"
+                onChange={setAgeGroup}
+              />
             </div>
           </div>
 
@@ -132,12 +151,11 @@ export function PatientDirectory() {
             </div>
           )}
 
-          {/* Data Display Area */}
           <div className="min-h-[500px]">
             {viewMode === 'table' ? (
-              <PatientTable patients={data} loading={loading} />
+              <PatientTable patients={data} loading={loading} error={error} />
             ) : (
-              <PatientGrid patients={data} loading={loading} />
+              <PatientGrid patients={data} loading={loading} error={error} />
             )}
           </div>
 

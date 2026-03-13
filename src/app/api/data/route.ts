@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const sortField = searchParams.get('sort') || '';
     const sortOrder = searchParams.get('order') || 'asc';
     const medicalIssue = searchParams.get('medical_issue')?.toLowerCase() || '';
+    const ageGroup = searchParams.get('age_group') || '';
 
     // Load data from JSON file
     const filePath = path.join(process.cwd(), 'src/data/patients.json');
@@ -32,6 +33,13 @@ export async function GET(request: NextRequest) {
 
     if (medicalIssue) {
       patients = patients.filter(p => p.medical_issue.toLowerCase() === medicalIssue);
+    }
+
+    if (ageGroup) {
+      const [min, max] = ageGroup.split('-').map(Number);
+      if (!isNaN(min) && !isNaN(max)) {
+        patients = patients.filter(p => p.age >= min && p.age <= max);
+      }
     }
 
     // Sorting

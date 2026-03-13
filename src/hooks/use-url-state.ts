@@ -64,6 +64,7 @@ export function useUrlState() {
     return {
       search: getParam('search'),
       medical_issue: getParam('medical_issue'),
+      age_group: getParam('age_group'),
       sort: getParam('sort', 'id'),
       order: getParam('order', 'asc') as 'asc' | 'desc',
       page: parseInt(getParam('page', '1'), 10),

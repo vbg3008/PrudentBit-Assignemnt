@@ -5,13 +5,15 @@ import { PatientRow } from './patient-row';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRef } from 'react';
+import { AlertCircle } from 'lucide-react';
 
 interface PatientTableProps {
   patients: Patient[];
   loading: boolean;
+  error?: string | null;
 }
 
-export function PatientTable({ patients, loading }: PatientTableProps) {
+export function PatientTable({ patients, loading, error }: PatientTableProps) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
@@ -23,6 +25,16 @@ export function PatientTable({ patients, loading }: PatientTableProps) {
 
   if (loading && patients.length === 0) {
     return <TableSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-red-500 border border-red-100 rounded-lg bg-red-50">
+        <AlertCircle className="h-8 w-8" />
+        <p className="text-[15px] font-medium">Failed to load patients</p>
+        <p className="text-[13px] text-red-400">{error}</p>
+      </div>
+    );
   }
 
   if (patients.length === 0) {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useQuery, useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
-import { fetchPatients, FetchParams } from '@/lib/api';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { fetchPatients } from '@/lib/api';
 import { useUrlState } from './use-url-state';
 import { useMemo } from 'react';
 
@@ -27,6 +27,7 @@ export function usePatients() {
   const setSearch = (search: string) => setParam('search', search);
   const setSort = (sort: string, order: 'asc' | 'desc') => setParams({ sort, order, page: 1 });
   const setMedicalIssue = (medical_issue: string) => setParam('medical_issue', medical_issue);
+  const setAgeGroup = (age_group: string) => setParam('age_group', age_group);
 
   return {
     data: response?.data || [],
@@ -38,6 +39,7 @@ export function usePatients() {
     setSearch,
     setSort,
     setMedicalIssue,
+    setAgeGroup,
     setParam,
     setParams,
     refresh: refetch,

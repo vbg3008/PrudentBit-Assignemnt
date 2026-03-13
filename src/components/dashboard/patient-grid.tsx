@@ -2,15 +2,27 @@
 
 import { Patient } from '@/types/schema';
 import { PatientCard } from './patient-card';
+import { AlertCircle } from 'lucide-react';
 
 interface PatientGridProps {
   patients: Patient[];
   loading: boolean;
+  error?: string | null;
 }
 
-export function PatientGrid({ patients, loading }: PatientGridProps) {
+export function PatientGrid({ patients, loading, error }: PatientGridProps) {
   if (loading && patients.length === 0) {
     return <GridSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-red-500">
+        <AlertCircle className="h-8 w-8" />
+        <p className="text-[15px] font-medium">Failed to load patients</p>
+        <p className="text-[13px] text-red-400">{error}</p>
+      </div>
+    );
   }
 
   if (patients.length === 0) {
@@ -23,8 +35,7 @@ export function PatientGrid({ patients, loading }: PatientGridProps) {
 
   return (
     <div
-      className="grid gap-6"
-      style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       role="region"
       aria-label="Patient Directory Grid"
     >
@@ -37,7 +48,7 @@ export function PatientGrid({ patients, loading }: PatientGridProps) {
 
 function GridSkeleton() {
   return (
-    <div className="grid gap-6" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {Array.from({ length: 8 }).map((_, i) => (
         <div
           key={i}

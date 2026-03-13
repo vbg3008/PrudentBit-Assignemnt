@@ -2,6 +2,7 @@ import { PatientDirectory } from "@/components/dashboard/patient-directory";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import fs from 'fs/promises';
 import path from 'path';
+import { Suspense } from 'react';
 
 export default async function Home() {
   // Get initial count from the data file on the server
@@ -16,14 +17,16 @@ export default async function Home() {
   }
 
   return (
-    <main className="">
+    <main>
       <DashboardHeader totalCount={initialCount} />
-      
-      <div className="">
-        <PatientDirectory />
-      </div>
 
-   
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        </div>
+      }>
+        <PatientDirectory />
+      </Suspense>
     </main>
   );
 }
